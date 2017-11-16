@@ -179,7 +179,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 
 			}
 			//if object is found it will be found in foundCoordinates so no check is needed
-
+			//TODO only take the most important objects found
 			for(int i = 0; i < foundCoordinates.size(); i++){
 				pair<float,float> found = foundCoordinates[i];
 				putText(cameraFeed, "Tracking Object", Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);

@@ -20,38 +20,10 @@ bool isUpperRight(pair<double, double> myPosition,pair<double, double> enemyPosi
 
 const char* Commander::getDirection(pair<double, double> oldC, pair<double, double> newC){
 
-  int threshold = 2;
-  if (newC.first - oldC.first > threshold){
-    if (newC.second - oldC.second > threshold){
-      return "DreaptaJos";
-    }else if (newC.second - oldC.second < -threshold){
-      return "DreaptaSus";
-    }else{
-      return "Dreapta";
-    }
-  }else if (newC.first - oldC.first < -threshold){
-    if (newC.second - oldC.second > threshold){
-      return "StangaJos";
-    }else if (newC.second - oldC.second < -threshold){
-      return "StangaSus";
-    }else{
-      return "Stanga";
-    }
-  }else{
-    if (newC.second - oldC.second > threshold){
-      return "Jos";
-    }else if (newC.second - oldC.second < -threshold){
-      return "Sus";
-    }else{
-      return "Static";
-    }
-    assert("reached end of getDirection");
-  }
-
 }
 
 void Commander::go(pair<double, double> myPosition, pair<double, double> enemyPosition){
-
+  //TODO add special command after detecting position
   if (isLowerLeft(myPosition, enemyPosition)){
     cout<<"Lower Left";
   }else if (isLowerRight(myPosition, enemyPosition)){
