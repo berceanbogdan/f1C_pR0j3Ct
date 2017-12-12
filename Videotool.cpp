@@ -1,6 +1,10 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include<stdlib.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <netinet/in.h>
 //#include <opencv2\highgui.h>
 #include "opencv2/highgui/highgui.hpp"
 //#include <opencv2\cv.h>
@@ -10,6 +14,7 @@ using namespace std;
 using namespace cv;
 //initial min and max HSV filter values.
 //these will be changed using trackbars
+char str2[10];
 int H_MIN = 0;
 int H_MAX = 256;
 int S_MIN = 0;
@@ -175,6 +180,71 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 		else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
 	}
 }
+
+
+void socket_communication(char *ip ,int port, char *c) {
+   int sockfd, n;
+   struct sockaddr_in serv_addr;
+   struct hostent *server;
+
+   char buffer[256];
+
+
+   /* Create a socket point */
+   sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+   if (sockfd < 0) {
+      perror("ERROR opening socket");
+      exit(1);
+   }
+
+   server = gethostbyname(ip);
+
+   if (server == NULL) {
+      fprintf(stderr,"ERROR, no such host\n");
+      exit(0);
+   }
+
+   bzero((char *) &serv_addr, sizeof(serv_addr));
+   serv_addr.sin_family = AF_INET;
+   bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+   serv_addr.sin_port = htons(port);
+
+   /* Now connect to the server */
+   if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
+      perror("ERROR connecting");
+      exit(1);
+   }
+
+   /* Now ask for a message from the user, this message
+      * will be read by server
+   */
+   int len= strlen(c);
+	 for(int i=0;i<len;i++)
+   {
+   /* Send message to the server */
+   sprintf(str2,"%c",c[i]);
+     n = send(sockfd, str2, strlen(str2),0);
+
+     if (n < 0) {
+      perror("ERROR writing to socket");
+      exit(1);
+     }
+     unsigned int g = sleep(1);
+
+   }
+
+   /* Now read server response
+   bzero(buffer,256);
+   n = read(sockfd, buffer, 255);
+
+   if (n < 0) {
+      perror("ERROR reading from socket");
+      exit(1);
+   }*/
+
+}
+
 int main(int argc, char* argv[])
 {
 
