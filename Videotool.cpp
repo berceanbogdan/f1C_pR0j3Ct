@@ -21,6 +21,10 @@ int S_MIN = 0;
 int S_MAX = 256;
 int V_MIN = 0;
 int V_MAX = 256;
+char[20] ip = "193.226.12.217";
+int port = 20236;
+
+int vect[2];
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -245,6 +249,135 @@ void socket_communication(char *ip ,int port, char *c) {
 
 }
 
+void detecteazaFata(){
+	socket_communication(ip,20232,"fs"); // s-au modificat coordonatele,apelezi trackfilter si iti da noile coordonate
+	//Matrix to store each frame of the webcam feed
+	Mat cameraFeed;
+	//matrix storage for HSV image
+	Mat HSV;
+	//matrix storage for binary threshold image
+	Mat threshold;
+	//x and y values for the location of the object
+	int x = 0, y = 0;
+	//create slider bars for HSV filtering
+	createTrackbars();
+	//video capture object to acquire webcam feed
+	VideoCapture capture;
+	//open capture object at location zero (default location for webcam), an ip
+	capture.open("rtmp://172.16.254.99/live/nimic");
+	//set height and width of capture frame
+	capture.set(CV_CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
+	capture.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
+ 	capture.read(cameraFeed);
+  		cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+		//filter HSV image between values and store filtered image to
+		//threshold matrix
+   
+   //rozul
+		inRange(HSV, Scalar(168, 60, 70), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+		//perform morphological operations on thresholded image to eliminate noise
+		//and emphasize the filtered object(s)
+		morphOps(threshold);
+		//pass in thresholded frame to our object tracking function
+		//this function will return the x and y coordinates of the
+		//filtered object
+   
+		trackFilteredObject(x, y, threshold, cameraFeed);
+   printf("Am detectat fata\n");
+   
+   vect[0]=x;
+   vect[1]=y;
+}
+
+void start_strategy(int my_robot1, int my_robot2, int oponent1, int oponent2)
+{
+	if ( (my_robot1 >= oponent1) && (my_robot2 >= oponent2) ){
+  		//square 1
+ 		
+	detecteazaFata();  	
+  	if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
+	{
+		socket_communication(ip,port,"fs");
+	}
+	if(vect[0]>my_robot1 && vect[1]<my_robot2)
+	{
+		socket_communication(ip,port,"lfs");
+	}
+	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"rfs");
+	}
+	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"llfs");
+	}
+}
+if ( (my_robot1 < oponent1) && (my_robot2 > oponent2) ){
+  //square 2
+	detecteazaFata(); 
+  if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
+	{
+		socket_communication(ip,port,"rfs");
+	}
+	if(vect[0]>my_robot1 && vect[1]<my_robot2)
+	{
+		socket_communication(ip,port,"fs");
+	}
+	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"llfs");
+	}
+	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"lfs");
+	}
+}
+if ( (my_robot1 > oponent1) && (my_robot2 < oponent2) ){
+  	//square 3
+	detecteazaFata(); 
+  
+  	if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
+	{
+		socket_communication(ip,port,"lfs");
+	}
+	if(vect[0]>my_robot1 && vect[1]<my_robot2)
+	{
+	socket_communication(ip,port,"llfs");
+	}
+	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
+	{
+	socket_communication(ip,port,"fs");
+	}
+	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
+	{
+	socket_communication(ip,port,"rfs");
+	}
+}
+if ( (my_robot1 < oponent1) && (my_robot2 < oponent2) ){
+  //square 4
+	detecteazaFata(); 
+  
+  if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
+	{
+		socket_communication(ip,port,"llfs");
+	}
+	if(vect[0]>my_robot1 && vect[1]<my_robot2)
+	{
+		socket_communication(ip,port,"rfs");
+	}
+	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"lfs");
+	}
+	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
+	{
+		socket_communication(ip,port,"fs");
+	}
+}
+
+}
+
+
 int main(int argc, char* argv[])
 {
 
@@ -307,6 +440,9 @@ int main(int argc, char* argv[])
 		//this function will return the x and y coordinates of the
 		//filtered object
 		trackFilteredObject(x, y, threshold, cameraFeed);
+
+		start_strategy(var1, var2, x, y);
+
 
 		//show frames
 		imshow(windowName2, threshold);
