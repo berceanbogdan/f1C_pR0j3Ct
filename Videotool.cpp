@@ -274,42 +274,43 @@ void detecteazaFata(){
 		//threshold matrix
    
    //rozul
-		inRange(HSV, Scalar(168, 60, 70), Scalar(H_MAX, S_MAX, V_MAX), threshold);
-		//perform morphological operations on thresholded image to eliminate noise
-		//and emphasize the filtered object(s)
-		morphOps(threshold);
-		//pass in thresholded frame to our object tracking function
-		//this function will return the x and y coordinates of the
-		//filtered object
+	inRange(HSV, Scalar(168, 60, 70), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+	//perform morphological operations on thresholded image to eliminate noise
+	//and emphasize the filtered object(s)
+	morphOps(threshold);
+	//pass in thresholded frame to our object tracking function
+	//this function will return the x and y coordinates of the
+	//filtered object
    
-		trackFilteredObject(x, y, threshold, cameraFeed);
-   printf("Am detectat fata\n");
-   
-   vect[0]=x;
-   vect[1]=y;
+	trackFilteredObject(x, y, threshold, cameraFeed);
+  
+ 	vect[0]=x;
+   	vect[1]=y;
 }
 
 void start_strategy(int my_robot1, int my_robot2, int oponent1, int oponent2)
 {
+
+	char[10] movement ;
 	if ( (my_robot1 >= oponent1) && (my_robot2 >= oponent2) ){
   		//square 1
  		
 	detecteazaFata();  	
   	if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
 	{
-		socket_communication(ip,port,"fs");
+		strcpy(message,"fs");
 	}
 	if(vect[0]>my_robot1 && vect[1]<my_robot2)
 	{
-		socket_communication(ip,port,"lfs");
+		strcpy(message,"lfs"); 
 	}
 	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"rfs");
+		strcpy(message,"rfs");
 	}
 	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"llfs");
+		strcpy(message,"llfs");
 	}
 }
 if ( (my_robot1 < oponent1) && (my_robot2 > oponent2) ){
@@ -317,19 +318,19 @@ if ( (my_robot1 < oponent1) && (my_robot2 > oponent2) ){
 	detecteazaFata(); 
   if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
 	{
-		socket_communication(ip,port,"rfs");
+		strcpy(message,"rfs");
 	}
 	if(vect[0]>my_robot1 && vect[1]<my_robot2)
 	{
-		socket_communication(ip,port,"fs");
+		strcpy(message,"fs");
 	}
 	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"llfs");
+		strcpy(message,"llfs");
 	}
 	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"lfs");
+		strcpy(message,"lfs");
 	}
 }
 if ( (my_robot1 > oponent1) && (my_robot2 < oponent2) ){
@@ -338,19 +339,19 @@ if ( (my_robot1 > oponent1) && (my_robot2 < oponent2) ){
   
   	if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
 	{
-		socket_communication(ip,port,"lfs");
+		strcpy(message,"lfs");
 	}
 	if(vect[0]>my_robot1 && vect[1]<my_robot2)
 	{
-	socket_communication(ip,port,"llfs");
+		strcpy(message,"llfs");
 	}
 	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
 	{
-	socket_communication(ip,port,"fs");
+		strcpy(message,"fs");
 	}
 	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
 	{
-	socket_communication(ip,port,"rfs");
+		strcpy(message,"rfs");
 	}
 }
 if ( (my_robot1 < oponent1) && (my_robot2 < oponent2) ){
@@ -359,21 +360,23 @@ if ( (my_robot1 < oponent1) && (my_robot2 < oponent2) ){
   
   if(vect[0]<=my_robot1 && vect[1]<=my_robot2)
 	{
-		socket_communication(ip,port,"llfs");
+		strcpy(message,"llfs");
 	}
 	if(vect[0]>my_robot1 && vect[1]<my_robot2)
 	{
-		socket_communication(ip,port,"rfs");
+		strcpy(message,"rfs");
 	}
 	  if(vect[0]<my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"lfs");
+		strcpy(message,"lfs");
 	}
 	  if(vect[0]>my_robot1 && vect[1]>my_robot2)
 	{
-		socket_communication(ip,port,"fs");
+		strcpy(message,"fs");
 	}
 }
+
+socket_communication(ip,port,message);
 
 }
 
