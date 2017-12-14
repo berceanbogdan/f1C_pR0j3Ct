@@ -135,6 +135,12 @@ void morphOps(Mat &thresh) {
 
 
 }
+void closeSocket(){
+	//TODO
+	//close(sockfd) vs shutdown(sockfd)
+}
+
+
 void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 
 	Mat temp;
@@ -184,6 +190,8 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 		else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
 	}
 }
+
+
 
 
 void socket_communication(char *ip ,int port, char *c) {
@@ -245,7 +253,9 @@ void socket_communication(char *ip ,int port, char *c) {
    if (n < 0) {
       perror("ERROR reading from socket");
       exit(1);
-   }*/
+	}*/
+	
+	closeSocket(sockfd);
 
 }
 
